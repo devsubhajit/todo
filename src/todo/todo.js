@@ -8,7 +8,8 @@ class Todo extends React.Component {
         this.state ={ 
             list:[],
             editIndex:-1,
-            task:''
+            task:'',
+            filter:''
         }
     }
 
@@ -22,7 +23,7 @@ class Todo extends React.Component {
                         let newTask = {
                             title:this.state.task,
                             id:uuidv4(),
-                            status:"inprogress"
+                            status:"active"
                         }
                         local_list.push(newTask);
                         this.setState({
@@ -36,10 +37,23 @@ class Todo extends React.Component {
                 }}>
                     <input type="text" value={this.state.task} onChange={(e)=>{this.setState({task:e.target.value})}}/>
                     <button type='submit'>Add</button>
+                   
                 </form>
+                <select onChange={(e)=>{
+                   
+                    this.setState({
+                        filter:e.target.value
+                    })
+                 
+                }}>
+                        <option value="">All</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                    </select>
                  {this.state.list && this.state.list.length > 0 && 
                 <ul>
-                    {this.state.list.map((item, i)=>{
+                    {this.state.list.filter((a)=>{if(this.state.filter !== '' ) { return  a.status === this.state.filter}else {return a}   }).map((item, i)=>{
+                        
                         return <li key={i}>
                            
                             <input type="text" value={item.title} disabled={this.state.editIndex !== i}
@@ -55,7 +69,7 @@ class Todo extends React.Component {
                             <button type="button" style={{backgroundColor:item.status === 'completed' ? 'green' : 'red', color:'#fff'}} onClick={()=>{
                                 let local_list = [...this.state.list];
                                 let index = local_list.map(l=> {return l.id}).indexOf(item.id);
-                                local_list[index].status = local_list[index].status === 'completed' ? 'inprogress' : 'completed';
+                                local_list[index].status = local_list[index].status === 'completed' ? 'active' : 'completed';
                                 this.setState({
                                     list:local_list
                                 })
